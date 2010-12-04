@@ -3,6 +3,7 @@
 <interface uri="http://gfxmonk.net/dist/0install/simple_notify.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
 	<name>simple_notify</name>
 	<summary>A simple python-inotify wrapper</summary>
+	<homepage>https://github.com/gfxmonk/simple_notify</homepage>
 	<description>
 Example:
 
