@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface uri="http://gfxmonk.net/dist/0install/simple_notify.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+	<name>simple_notify</name>
+	<summary>A simple python-inotify wrapper</summary>
+	<description>
+Example:
+
+import simple_notify
+def on_change(event):
+	print &quot;event &quot; + event.event + &quot; occurred to &quot; + event.path
+
+watcher = simple_notify.watch(&quot;/tmp&quot;, callback=on_change)
+raw_input(&quot;press enter to quit...&quot;)
+
+-----
+watch() spawns a new thread that will watch for inotify events and
+call your callback function.
+
+Directories are tracked recursively, so when watching &quot;/tmp&quot; you would
+see everything that happens in /tmp and any of its subdirectories
+
+Your callback receives as its single argument an Event instance.
+Event instances have the following fields:
+ - path: path to file (relative to the watched root)
+ - base: relative path to directory containing this node (from watch root)
+ - name: name of this node
+ - exists: (boolean) whether the file in this event now exists.
+   False for REMOVED and
+   MOVED_FROM events, True for ADDED, MODIFIED and MOVED_TO events
+ - is_dir: boolean
+
+You can pass `ignore_modifications=True` to `watch` if you don't wish
+to be nodified of file modification events (merely additions, removals
+and moves).
+	</description>
+	<group main="simple_notify">
+		<requires interface="http://gfxmonk.net/dist/0install/pyinotify.xml">
+			<environment insert="python2" mode="prepend" name="PYTHONPATH"/>
+		</requires>
+		<implementation id="sha1new=76a65e479954cce747d6241c30f69f6a6f2a15b4" released="2010-12-04" version="0.1">
+		
+    <manifest-digest sha256="55921e2027116bdbcff702812ccdac6b55a913c91c565035440b30be5eec4a92"/>
+    <archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.1.tgz" size="1247"/>
+  </implementation>
+	</group>
+</interface>

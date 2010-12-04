@@ -9,7 +9,7 @@ EVENT_MASK_WITH_MODIFICATIONS = EVENT_MASK | IN_CLOSE_WRITE
 
 logger = logging.getLogger(__name__)
 class Watch(object):
-	def __init__(self, path, callback, recursive=True, ignore_modifications=False):
+	def __init__(self, path, callback, ignore_modifications=False):
 		self.event_mask = EVENT_MASK if ignore_modifications else EVENT_MASK_WITH_MODIFICATIONS
 		self._dir_queue = queue.Queue()
 		self._root = os.path.realpath(path)
@@ -27,7 +27,7 @@ class Watch(object):
 	
 	def stop(self):
 		self._notifier.stop()
-
+	
 class Event(object):
 	MOVED_TO = 'MOVED_TO'
 	MOVED_FROM = 'MOVED_FROM'

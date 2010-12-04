@@ -1,0 +1,29 @@
+Example:
+
+import simple_notify
+def on_change(event):
+	print "event " + event.event + " occurred to " + event.path
+
+watcher = simple_notify.watch("/tmp", callback=on_change)
+raw_input("press enter to quit...")
+
+-----
+watch() spawns a new thread that will watch for inotify events and
+call your callback function.
+
+Directories are tracked recursively, so when watching "/tmp" you would
+see everything that happens in /tmp and any of its subdirectories
+
+Your callback receives as its single argument an Event instance.
+Event instances have the following fields:
+ - path: path to file (relative to the watched root)
+ - base: relative path to directory containing this node (from watch root)
+ - name: name of this node
+ - exists: (boolean) whether the file in this event now exists.
+   False for REMOVED and
+   MOVED_FROM events, True for ADDED, MODIFIED and MOVED_TO events
+ - is_dir: boolean
+
+You can pass `ignore_modifications=True` to `watch` if you don't wish
+to be nodified of file modification events (merely additions, removals
+and moves).
