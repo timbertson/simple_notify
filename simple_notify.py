@@ -1,4 +1,3 @@
-import logging
 import Queue as queue
 import os
 
@@ -7,7 +6,6 @@ from pyinotify import IN_DELETE, IN_CREATE, IN_MOVED_FROM, IN_MOVED_TO, IN_CLOSE
 EVENT_MASK = IN_DELETE | IN_CREATE | IN_MOVED_TO | IN_MOVED_FROM
 EVENT_MASK_WITH_MODIFICATIONS = EVENT_MASK | IN_CLOSE_WRITE
 
-logger = logging.getLogger(__name__)
 class Watch(object):
 	def __init__(self, path, callback, ignore_modifications=False):
 		self.event_mask = EVENT_MASK if ignore_modifications else EVENT_MASK_WITH_MODIFICATIONS
@@ -61,8 +59,6 @@ class Event(object):
 def handler(which, exists):
 	def handle_event(self, event):
 		event_path = self.relative_path(event.path)
-		path = os.path.join(event_path, event.name)
-		logging.debug("event %s occurred to path %s" % (which, path))
 		is_dir = self.is_dir(event)
 		self.on_change(Event(base=event_path, name=event.name, event=which, exists=exists, is_dir=is_dir))
 	return handle_event
