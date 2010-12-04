@@ -7,6 +7,11 @@ import time
 import simple_notify
 
 class Monitor():
+	"""
+	adds a watch, and adds all its events to a list.
+	event retrieval is delayed by 0.1s, to ensure inotify
+	callbacks have had a chance to fire
+	"""
 	def __init__(self, base, **kw):
 		self._events = []
 		self.base = base
@@ -36,6 +41,10 @@ class Monitor():
 
 
 class BaseTest(unittest.TestCase):
+	"""
+	basic test class - maintains a temp-dir for the duration of the test,
+	and provides utility methods for messing with that directory
+	"""
 	def setUp(self):
 		self.base = tempfile.mkdtemp()
 	
@@ -64,7 +73,9 @@ class BaseTest(unittest.TestCase):
 		src, dest = map(self.fullpath, (src, dest))
 		os.rename(src, dest)
 	
-class ModificationTest(BaseTest):
+
+class SimpleEventsTest(BaseTest):
+	"""test one level (non-recursive) cases"""
 	def setUp(self):
 		super(type(self), self).setUp()
 		self.monitor = Monitor(self.base)
@@ -105,6 +116,7 @@ class ModificationTest(BaseTest):
 			])
 
 class NestedTest(BaseTest):
+	"""cases involving multiple levels of directories"""
 	def setUp(self):
 		super(type(self), self).setUp()
 		self.mkdir("nested")
@@ -117,7 +129,8 @@ class NestedTest(BaseTest):
 	def test_should_detect_events_to_a_nested_file(self):
 		self.touch("nested/file")
 		try:
-			# this probably shouldn't be the case, but is acceptable
+			# this shouldn't be the case, but is acceptable
+			# (I don't know why this case specifically generates two events...)
 			self.assertEquals(self.monitor.events, [
 				simple_notify.Event(base="nested", event=simple_notify.Event.ADDED, exists=True, name="file", is_dir=False),
 				simple_notify.Event(base="nested", event=simple_notify.Event.MODIFIED, exists=True, name="file", is_dir=False)
@@ -148,14 +161,13 @@ class NestedTest(BaseTest):
 		])
 
 class IgnoreNodificationTest(BaseTest):
+	"""testing ignored mode operation"""
 	def setUp(self):
 		super(type(self), self).setUp()
 		self.monitor = Monitor(self.base, ignore_modifications=True)
 	
-	def test_should_ignore_a_modified_file(self):
+	def test_should_not_track_modifications(self):
 		self.touch("some_file")
-
-		self.monitor.clear()
 		self.touch("some_file")
-		self.assertEquals(self.monitor.changed_paths, [])
+		self.assertEquals(self.monitor.events, [simple_notify.Event(base="", event=simple_notify.Event.ADDED, exists=True, name="some_file", is_dir=True)])
 

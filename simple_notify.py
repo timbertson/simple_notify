@@ -49,8 +49,6 @@ class Event(object):
 		       map(lambda a: getattr(other, a), attrs)
 	
 	def __repr__(self):
-		attrs = ['base', 'name', 'event', 'exists']
-		return repr(map(lambda a: getattr(self, a) , attrs))
 		return "<# %s %s at %s >"% (
 				self.event, "dir" if self.is_dir else "file", self.path)
 	
@@ -66,9 +64,6 @@ def handler(which, exists):
 		path = os.path.join(event_path, event.name)
 		logging.debug("event %s occurred to path %s" % (which, path))
 		is_dir = self.is_dir(event)
-		#if is_dir:
-		#	self._dir_queue.put((path, exists))
-		#else:
 		self.on_change(Event(base=event_path, name=event.name, event=which, exists=exists, is_dir=is_dir))
 	return handle_event
 
