@@ -8,7 +8,7 @@
 from setuptools import *
 setup(
 	name='simple_notify',
-	version='0.1',
+	version='0.1.1',
 	author_email='tim@gfxmonk.net',
 	author='Tim Cuthbertson',
 	url='http://gfxmonk.net/dist/0install/simple_notify.xml',

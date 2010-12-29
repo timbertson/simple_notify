@@ -1,5 +1,7 @@
 import Queue as queue
 import os
+import logging
+logger = logging.getLogger(__name__)
 
 from pyinotify import WatchManager, ThreadedNotifier, ProcessEvent
 from pyinotify import IN_DELETE, IN_CREATE, IN_MOVED_FROM, IN_MOVED_TO, IN_CLOSE_WRITE
@@ -89,3 +91,9 @@ class FileProcessEvent(ProcessEvent):
 	process_IN_MOVED_TO = handler(Event.MOVED_TO, True)
 
 watch = Watch
+
+if __name__ == '__main__':
+	def on_change(event):
+		print event.name, event.event, event.exists
+	watch('.', on_change)
+	raw_input()

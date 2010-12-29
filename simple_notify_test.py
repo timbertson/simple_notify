@@ -18,7 +18,7 @@ class Monitor():
 		self.watcher = simple_notify.watch(base, callback=self.on_change, **kw)
 	
 	def _sleep(self):
-		time.sleep(0.1)
+		time.sleep(0.01)
 
 	def clear(self):
 		self._sleep()

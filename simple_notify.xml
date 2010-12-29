@@ -35,7 +35,7 @@ You can pass `ignore_modifications=True` to `watch` if you don't wish
 to be nodified of file modification events (merely additions, removals
 and moves).
 	</description>
-	<group main="simple_notify">
+	<group main="simple_notify.py">
 		<requires interface="http://gfxmonk.net/dist/0install/pyinotify.xml">
 			<environment insert="python2" mode="prepend" name="PYTHONPATH"/>
 		</requires>
@@ -43,6 +43,10 @@ and moves).
 		
     <manifest-digest sha256="55921e2027116bdbcff702812ccdac6b55a913c91c565035440b30be5eec4a92"/>
     <archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.1.tgz" size="1247"/>
+  </implementation>
+		<implementation id="sha1new=2af74108cc883500c9dbca42ce9813366d4b97d1" released="2010-12-05" version="0.1.1">
+    <manifest-digest sha256="3063dd5d1cb3b18a1c35a0d083aca6bb03ec84c05c7be28905ef7a534f5f2680"/>
+    <archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.1.1.tgz" size="1184"/>
   </implementation>
 	</group>
 </interface>
