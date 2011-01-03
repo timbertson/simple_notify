@@ -5,6 +5,7 @@ import os
 import time
 
 import simple_notify
+from simple_notify import Event
 
 class Monitor():
 	"""
@@ -16,18 +17,24 @@ class Monitor():
 		self._events = []
 		self.base = base
 		self.watcher = simple_notify.watch(base, callback=self.on_change, **kw)
+		self.sleep_time = kw.get('latency',0.01)
 	
 	def _sleep(self):
-		time.sleep(0.01)
+		time.sleep(self.sleep_time * 2)
 
 	def clear(self):
 		self._sleep()
+		print "dropping events: %r" % (self._events,)
 		self._events = []
 	
 	@property
 	def events(self):
 		self._sleep()
 		return self._events
+
+	@property
+	def event_types(self):
+		return map(lambda x: x.event, self.events)
 	
 	@property
 	def changed_paths(self):
@@ -38,7 +45,6 @@ class Monitor():
 	
 	def stop(self):
 		self.watcher.stop()
-
 
 class BaseTest(unittest.TestCase):
 	"""
@@ -55,7 +61,7 @@ class BaseTest(unittest.TestCase):
 	def touch(self, path):
 		with open(self.fullpath(path), 'w') as f:
 			f.write("")
-
+	
 	def mkdir(self, path):
 		os.mkdir(self.fullpath(path))
 	
@@ -82,14 +88,25 @@ class SimpleEventsTest(BaseTest):
 	
 	def test_should_detect_a_new_file(self):
 		self.touch("some_file")
-		self.assertEquals(self.monitor.changed_paths, ["some_file"])
+		try:
+			# this shouldn't be the case, but is acceptable
+			# (I don't know why this case specifically generates two events...)
+			self.assertEquals(self.monitor.events, [
+				Event(base="", event=Event.ADDED, exists=True, name="some_file", is_dir=False),
+				Event(base="", event=Event.MODIFIED, exists=True, name="some_file", is_dir=False)
+			])
+		except AssertionError:
+			# this is ideal:
+			self.assertEquals(self.monitor.events, [
+				Event(base="", event=Event.ADDED, exists=True, name="some_file", is_dir=False),
+			])
 	
 	def test_should_detect_a_modified_file(self):
 		self.touch("some_file")
 		self.monitor.clear()
 
 		self.touch("some_file")
-		self.assertEquals(self.monitor.changed_paths, ["some_file"])
+		self.assertEquals(self.monitor.events, [Event(base="", event=Event.MODIFIED, exists=True, name="some_file", is_dir=False)])
 	
 	def test_should_detect_a_deleted_file(self):
 		self.touch("f")
@@ -170,4 +187,47 @@ class IgnoreNodificationTest(BaseTest):
 		self.touch("some_file")
 		self.touch("some_file")
 		self.assertEquals(self.monitor.events, [simple_notify.Event(base="", event=simple_notify.Event.ADDED, exists=True, name="some_file", is_dir=True)])
+
+class CombineQuickEventsTest(BaseTest):
+	def setUp(self):
+		super(type(self), self).setUp()
+		self.latency = 0.2
+		self.monitor = Monitor(self.base, latency=self.latency)
+	
+	def sleep(self):
+		time.sleep(self.latency * 2)
+	
+	def test_should_combine_delete_and_add_events_into_modification(self):
+		self.touch("some_file")
+		self.monitor.clear()
+		self.rm("some_file")
+		self.touch("some_file")
+		self.assertEquals(self.monitor.event_types, [simple_notify.Event.MODIFIED])
+
+	def test_should_combine_add_and_remove_events_into_nothing(self):
+		self.touch("some_file")
+		self.rm("some_file")
+		self.assertEquals(self.monitor.events, [])
+
+	def test_should_not_combine_events_that_happen_more_than__latency__seconds_apart(self):
+		print repr(os.listdir(self.base))
+		self.touch("some_file")
+		self.sleep()
+		self.rm("some_file")
+		self.assertEquals(self.monitor.event_types, [simple_notify.Event.ADDED, simple_notify.Event.REMOVED])
+	
+class SimplificationTest(unittest.TestCase):
+	def event(self, event):
+		return simple_notify.Event(base="base", event=event, exists=True, name="name", is_dir=False)
+	def combine(self, first_type, second_type):
+		return self.event(first_type)._combines_with(self.event(second_type))
+
+	def test_should_combine_create_and_remove(self):
+		self.assertEquals(self.combine(Event.ADDED, Event.REMOVED), None)
+
+	def test_should_combine_remove_and_create(self):
+		self.assertEquals(self.combine(Event.REMOVED, Event.ADDED), Event.MODIFIED)
+
+	def test_should_combine_multiple_modifications(self):
+		self.assertEquals(self.combine(Event.MODIFIED, Event.MODIFIED), Event.MODIFIED)
 

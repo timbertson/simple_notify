@@ -1,3 +1,4 @@
 *.pyc
 *.pickle
 0inst
+*-local.xml
