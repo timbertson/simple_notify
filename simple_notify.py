@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import Queue as queue
 import os
 import logging

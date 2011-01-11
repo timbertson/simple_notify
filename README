@@ -1,3 +1,9 @@
+**Note**: I have discontinued development of simple_notify,
+          in favour of using the cross-platform `watchdog` library:
+          https://github.com/gorakhargosh/watchdog
+
+
+
 Example:
 
 import simple_notify

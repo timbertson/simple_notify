@@ -5,6 +5,12 @@
 	<summary>A simple python-inotify wrapper</summary>
 	<homepage>https://github.com/gfxmonk/simple_notify</homepage>
 	<description>
+**Note**: I have discontinued development of simple_notify,
+          in favour of using the cross-platform `watchdog` library:
+          https://github.com/gorakhargosh/watchdog
+
+
+
 Example:
 
 import simple_notify
@@ -40,13 +46,16 @@ and moves).
 			<environment insert="python2" mode="prepend" name="PYTHONPATH"/>
 		</requires>
 		<implementation id="sha1new=76a65e479954cce747d6241c30f69f6a6f2a15b4" released="2010-12-04" version="0.1">
-		
-    <manifest-digest sha256="55921e2027116bdbcff702812ccdac6b55a913c91c565035440b30be5eec4a92"/>
-    <archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.1.tgz" size="1247"/>
-  </implementation>
+			<manifest-digest sha256="55921e2027116bdbcff702812ccdac6b55a913c91c565035440b30be5eec4a92"/>
+			<archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.1.tgz" size="1247"/>
+		</implementation>
 		<implementation id="sha1new=2af74108cc883500c9dbca42ce9813366d4b97d1" released="2010-12-05" version="0.1.1">
-    <manifest-digest sha256="3063dd5d1cb3b18a1c35a0d083aca6bb03ec84c05c7be28905ef7a534f5f2680"/>
-    <archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.1.1.tgz" size="1184"/>
+			<manifest-digest sha256="3063dd5d1cb3b18a1c35a0d083aca6bb03ec84c05c7be28905ef7a534f5f2680"/>
+			<archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.1.1.tgz" size="1184"/>
+		</implementation>
+		<implementation id="sha1new=3bcd50420ac6ee1dd13360b7cc886e49b788ace8" released="2011-01-11" version="0.2">
+    <manifest-digest sha256="87640da53b4e889aa43e4222837704a66d961902c2c4bb842f5def1eb4470fd6"/>
+    <archive href="http://gfxmonk.net/dist/0install/simple_notify/simple_notify-0.2.tgz" size="2155"/>
   </implementation>
 	</group>
 </interface>
